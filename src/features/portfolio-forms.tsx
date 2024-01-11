@@ -17,6 +17,8 @@ import { Input } from "@/components/ui/input";
 import { portfolioSchema } from "@/types/portfolio-schema";
 import React from "react";
 import { PortfolioInputs, ProfileSchema } from "@/types/api";
+import { updatePost } from "@/lib/fetchers";
+import { toast } from "sonner";
 
 interface PortfolioFormProps {
   mode: "add" | "edit";
@@ -36,15 +38,15 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
   // ...
 
   const onSubmit = async (data: PortfolioInputs) => {
-    // const { success, message } = await updatePost(
-    //   mode,
-    //   data,
-    //   initialProductData?.data.id
-    // );
+    const { success, message } = await updatePost(
+      mode,
+      data,
+      initialProductData?.data.id
+    );
 
-    // success ? toast.success(message) : toast.error(message);
+    success ? toast.success(message) : toast.error(message);
 
-    router.push("/dashboard/products");
+    // router.push("/dashboard/products");
   };
 
   React.useEffect(() => {
