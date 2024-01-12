@@ -20,7 +20,7 @@ import { PortfolioInputs, ProfileSchema } from "@/types/api";
 import { updatePost } from "@/lib/fetchers";
 import { toast } from "sonner";
 import { Dropzone } from "@/components/ui/dropzone";
-import { CalendarIcon, FileCheck2Icon } from "lucide-react";
+import { CalendarIcon, FileCheck2Icon, XIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -211,9 +211,20 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             </FormItem>
           )}
         />
+
         {fields.map((field, index) => {
           return (
             <div key={field.id}>
+              <div className="flex">
+                <h1 className="text-2xl font-bold">Portfolio {index + 1}</h1>
+                <button
+                  type="button"
+                  onClick={() => remove(index)}
+                  className="ml-auto"
+                >
+                  <XIcon className="w-6 h-6" />
+                </button>
+              </div>
               <FormField
                 control={form.control}
                 name={`portfolio.${index}.name`}
@@ -251,9 +262,9 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                 name={`portfolio.${index}.company`}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>URL</FormLabel>
+                    <FormLabel>Company</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="Shopee" {...field} />
                     </FormControl>
                     <FormDescription>
                       This is your public display name.
@@ -262,97 +273,96 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.startDate`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="absolute w-auto p-0"
-                        align="start"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      Your date of birth is used to calculate your age.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.endDate`}
-                render={({ field }) => (
-                  <FormItem className="flex flex-col">
-                    <FormLabel>Date of birth</FormLabel>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              "w-[240px] pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          disabled={(date) =>
-                            date > new Date() || date < new Date("1900-01-01")
-                          }
-                          initialFocus
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormDescription>
-                      Your date of birth is used to calculate your age.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="md:flex md:space-x-2">
+                <FormField
+                  control={form.control}
+                  name={`portfolio.${index}.startDate`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col w-full">
+                      <FormLabel>Start Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="absolute w-auto p-0"
+                          align="start"
+                        >
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name={`portfolio.${index}.endDate`}
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>End Date</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0 " align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date("1900-01-01")
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name={`portfolio.${index}.description`}
@@ -366,10 +376,10 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                   </FormItem>
                 )}
               />
-              <Button onClick={() => remove(index)}>Remove</Button>
             </div>
           );
         })}
+        <div></div>
         <Button
           type="button"
           onClick={() =>
@@ -383,7 +393,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             })
           }
         >
-          APPEND
+          Add Portfolio
         </Button>
         <Button type="submit">Submit</Button>
       </form>
