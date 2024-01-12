@@ -4,10 +4,7 @@ import { cn } from "@/lib/utils";
 import React, { ChangeEvent, useRef } from "react";
 
 interface DropzoneProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "value" | "onChange"
-  > {
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "value"> {
   classNameWrapper?: string;
   className?: string;
   dropMessage: string;

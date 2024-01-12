@@ -5,7 +5,7 @@ export default function AddPortfolioPage() {
   return (
     <Card>
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl">Add Products</CardTitle>
+        <CardTitle className="text-2xl">Add Portfolio</CardTitle>
       </CardHeader>
       <CardContent>
         <ProfileForm mode="add" />

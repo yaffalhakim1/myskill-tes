@@ -1,34 +1,64 @@
-import { PortfolioInputs } from "@/types/api";
+import { PortfolioInputs, ProfileSchema } from "@/types/api";
 import { Response } from "@/types/api";
 
-export async function updatePost(
+export async function convertToCloudinaryURL(url: string) {
+  try {
+    // Skip if already a cloudinary url
+    if (!url.startsWith("blob")) {
+      return url;
+    }
+
+    const data = new FormData();
+    data.append("file", await fetch(url).then((res) => res.blob()));
+    data.append("upload_preset", "ruvcqm7j");
+
+    const res = await fetch(
+      `https://api.cloudinary.com/v1_1/dywbf3czv/image/upload`,
+      {
+        method: "POST",
+        body: data,
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("failed to upload product photo");
+    }
+
+    const json = await res.json();
+
+    // Remove version
+    const secureUrl = new URL(json.secure_url as string);
+    const segments = secureUrl.pathname.split("/");
+    segments.splice(4, 1);
+    secureUrl.pathname = segments.join("/");
+
+    return secureUrl.toString();
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+
+    return null;
+  }
+}
+
+export async function updatePortfolio(
   mode: "add" | "edit",
   payload: PortfolioInputs,
   id?: number
 ): Promise<Response> {
   try {
-    const formData = new FormData();
-    //   formData.append("name", payload.name)
-    //   formData.append("generic_name", payload.generic_name)
-    //   formData.append("content", payload.content)
-    //   formData.append("description", payload.description)
-    //   formData.append("drug_form", payload.drug_form)
-    //   formData.append("unit_in_pack", payload.unit_in_pack)
-    //   formData.append("weight", payload.weight.toString())
-    //   formData.append("length", payload.length.toString())
-    //   formData.append("width", payload.width.toString())
-    //   formData.append("height", payload.height.toString())
-    //   formData.append("image", payload.image)
-    //   formData.append("manufacturer_id", payload.manufacturer_id.toString())
-    //   formData.append("selling_unit", payload.selling_unit.toString())
-    //   formData.append(
-    //     "drug_classification_id",
-    //     payload.drug_classification_id.toString(),
-    //   )
-    //   formData.append(
-    //     "product_category_id",
-    //     payload.product_category_id.toString(),
-    //   )
+    const { avatar, backgroundImage, ...data } = payload;
+
+    const convertedImage = await convertToCloudinaryURL(backgroundImage);
+    const convertedAvatar = await convertToCloudinaryURL(avatar);
+
+    if (!convertedImage) {
+      throw new Error("Failed to upload the image. Try again later");
+    }
+    if (!convertedAvatar) {
+      throw new Error("Failed to upload the image. Try again later");
+    }
 
     const url = new URL(
       `${mode === "edit" ? `/v1/products/${id}` : "/v1/products"}`,
@@ -40,19 +70,17 @@ export async function updatePost(
       headers: {
         accept: "application/json",
       },
-      body: formData,
+      body: JSON.stringify({
+        ...data,
+        avatar: convertedAvatar,
+        backgroundImage: convertedImage,
+      }),
     };
 
     const res = await fetch(url, options);
 
     if (!res.ok) {
       throw new Error("Failed to update a product");
-    }
-
-    if (mode === "edit") {
-      //   mutate(url);
-      const id = (await res.json()).id as string;
-      await fetch(`/api/revalidate/products/${id}`);
     }
 
     return {

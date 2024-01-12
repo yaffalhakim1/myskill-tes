@@ -1,13 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
-import * as z from "zod";
 import { useRouter } from "next/router";
 
 import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { portfolioSchema } from "@/types/portfolio-schema";
 import React from "react";
 import { PortfolioInputs, ProfileSchema } from "@/types/api";
-import { updatePost } from "@/lib/fetchers";
+import { updatePortfolio } from "@/lib/fetchers";
 import { toast } from "sonner";
 import { Dropzone } from "@/components/ui/dropzone";
 import { CalendarIcon, FileCheck2Icon, XIcon } from "lucide-react";
@@ -29,6 +27,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
+import Image from "next/image";
+import { Textarea } from "@/components/ui/textarea";
 
 interface PortfolioFormProps {
   mode: "add" | "edit";
@@ -56,7 +56,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
   });
 
   const onSubmit = async (data: PortfolioInputs) => {
-    const { success, message } = await updatePost(
+    const { success, message } = await updatePortfolio(
       mode,
       data,
       initialProductData?.data.id
@@ -71,7 +71,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
     if (acceptedFiles && acceptedFiles.length > 0) {
       const allowedTypes = [
         {
-          types: ["image/jpeg", "image/png"],
+          types: ["image/jpeg", "image/png", "image/jpg"],
           message: "Only image files are allowed",
         },
       ];
@@ -86,6 +86,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
         });
       } else {
         form.setValue("backgroundImage", acceptedFiles[0]);
+        form.getFieldState("backgroundImage").isDirty;
         form.clearErrors("backgroundImage");
       }
     } else {
@@ -126,13 +127,9 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
     }
   }
 
-  //   React.useEffect(() => {
-  //     form.setFocus("username");
-  //   }, [form]);
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="backgroundImage"
@@ -145,17 +142,31 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                   handleOnDrop={handleOnDrop}
                 />
               </FormControl>
+
               <FormMessage />
             </FormItem>
           )}
         />
-        {form.watch("backgroundImage") && (
-          <div className="relative flex items-center justify-center gap-3 p-4">
-            <FileCheck2Icon className="w-4 h-4" />
-            <p className="text-sm font-medium">
-              {form.watch("backgroundImage")?.name}
-            </p>
-          </div>
+
+        {mode === "add" && form.watch("backgroundImage") && (
+          <Image
+            width={250}
+            height={250}
+            alt={"Image preview"}
+            // className="w-full"
+            src={
+              form.watch("backgroundImage") &&
+              URL.createObjectURL(form.watch("backgroundImage"))
+            }
+          />
+        )}
+        {mode === "edit" && initialProductData && (
+          <Image
+            width={100}
+            height={100}
+            src={initialProductData.data.backgroundImage}
+            alt={initialProductData.data.title}
+          />
         )}
         <FormField
           control={form.control}
@@ -173,11 +184,24 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             </FormItem>
           )}
         />
-        {form.watch("avatar") && (
-          <div className="relative flex items-center justify-center gap-3 p-4">
-            <FileCheck2Icon className="w-4 h-4" />
-            <p className="text-sm font-medium">{form.watch("avatar")?.name}</p>
-          </div>
+        {mode === "add" && form.watch("avatar") && (
+          <Image
+            width={100}
+            height={100}
+            alt={"Image preview"}
+            // className="w-full"
+            src={
+              form.watch("avatar") && URL.createObjectURL(form.watch("avatar"))
+            }
+          />
+        )}
+        {mode === "edit" && initialProductData && (
+          <Image
+            width={500}
+            height={500}
+            src={initialProductData.data.avatar}
+            alt={initialProductData.data.title}
+          />
         )}
         <FormField
           control={form.control}
@@ -188,9 +212,21 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
               <FormControl>
                 <Input placeholder="shadcn" {...field} />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title/position</FormLabel>
+              <FormControl>
+                <Input placeholder="shadcn" {...field} />
+              </FormControl>
+
               <FormMessage />
             </FormItem>
           )}
@@ -202,11 +238,13 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Textarea
+                  placeholder="Describe yourself here"
+                  {...field}
+                  rows={5}
+                />
               </FormControl>
-              <FormDescription>
-                This is your public display name.
-              </FormDescription>
+
               <FormMessage />
             </FormItem>
           )}
@@ -214,7 +252,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
         {fields.map((field, index) => {
           return (
-            <div key={field.id}>
+            <div key={field.id} className="space-y-4">
               <div className="flex">
                 <h1 className="text-2xl font-bold">Portfolio {index + 1}</h1>
                 <button
@@ -222,7 +260,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                   onClick={() => remove(index)}
                   className="ml-auto"
                 >
-                  <XIcon className="w-6 h-6" />
+                  <XIcon className="w-6 h-6 text-red-500" />
                 </button>
               </div>
               <FormField
@@ -234,9 +272,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                     <FormControl>
                       <Input placeholder="shadcn" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -250,9 +286,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                     <FormControl>
                       <Input placeholder="shadcn" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -266,19 +300,17 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                     <FormControl>
                       <Input placeholder="Shopee" {...field} />
                     </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
+
                     <FormMessage />
                   </FormItem>
                 )}
               />
-              <div className="md:flex md:space-x-2">
+              <div className="space-x-0 space-y-2 md:flex md:space-x-2 md:space-y-0">
                 <FormField
                   control={form.control}
                   name={`portfolio.${index}.startDate`}
                   render={({ field }) => (
-                    <FormItem className="flex flex-col w-full">
+                    <FormItem className="flex flex-col ">
                       <FormLabel>Start Date</FormLabel>
                       <Popover>
                         <PopoverTrigger asChild>
@@ -370,7 +402,11 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                   <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Textarea
+                        placeholder="paracetamol, aaa"
+                        {...field}
+                        rows={5}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -379,23 +415,26 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             </div>
           );
         })}
-        <div></div>
-        <Button
-          type="button"
-          onClick={() =>
-            append({
-              name: "",
-              position: "",
-              company: "",
-              startDate: new Date(),
-              endDate: new Date(),
-              description: "",
-            })
-          }
-        >
-          Add Portfolio
-        </Button>
-        <Button type="submit">Submit</Button>
+        <div className="space-x-2">
+          <>
+            <Button
+              type="button"
+              onClick={() =>
+                append({
+                  name: "",
+                  position: "",
+                  company: "",
+                  startDate: new Date(),
+                  endDate: new Date(),
+                  description: "",
+                })
+              }
+            >
+              Add Portfolio
+            </Button>
+            <Button type="submit">Submit</Button>
+          </>
+        </div>
       </form>
     </Form>
   );
