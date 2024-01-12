@@ -3,7 +3,6 @@ import { Response } from "@/types/api";
 
 export async function convertToCloudinaryURL(url: string) {
   try {
-    // Skip if already a cloudinary url
     if (!url.startsWith("blob")) {
       return url;
     }
@@ -57,7 +56,7 @@ export async function updatePortfolio(
       throw new Error("Failed to upload the image. Try again later");
     }
     if (!convertedAvatar) {
-      throw new Error("Failed to upload the image. Try again later");
+      throw new Error("Failed to upload the avatar. Try again later");
     }
 
     const url = new URL(

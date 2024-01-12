@@ -1,0 +1,20 @@
+{
+  "portfolio": {
+    "username": "Portfolio",
+    "description": "This is a portfolio page",
+    "title": "Portfolio",
+    "avatar": "https://i.imgur.com/2KZQH8t.png",
+    "backgroundImage": "https://i.imgur.com/2KZQH8t.png",
+    "portfolio": [
+      {
+        "id": 1,
+        "name": "yafi",
+        "position": "CEO",
+        "company": "Vercel",
+        "description": "This is a description",
+        "startDate": "2020-01-01",
+        "endDate": "2020-01-01"
+      }
+    ]
+  }
+}

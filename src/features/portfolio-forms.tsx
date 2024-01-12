@@ -129,7 +129,10 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="mx-auto space-y-4 "
+      >
         <FormField
           control={form.control}
           name="backgroundImage"
@@ -189,7 +192,6 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             width={100}
             height={100}
             alt={"Image preview"}
-            // className="w-full"
             src={
               form.watch("avatar") && URL.createObjectURL(form.watch("avatar"))
             }
@@ -417,22 +419,25 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
         })}
         <div className="space-x-2">
           <>
-            <Button
-              type="button"
-              onClick={() =>
-                append({
-                  name: "",
-                  position: "",
-                  company: "",
-                  startDate: new Date(),
-                  endDate: new Date(),
-                  description: "",
-                })
-              }
-            >
-              Add Portfolio
-            </Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit">{mode === "add" ? "Save" : "Update"}</Button>
+
+            {mode === "add" && (
+              <Button
+                type="button"
+                onClick={() =>
+                  append({
+                    name: "",
+                    position: "",
+                    company: "",
+                    startDate: new Date(),
+                    endDate: new Date(),
+                    description: "",
+                  })
+                }
+              >
+                Add Portfolio
+              </Button>
+            )}
           </>
         </div>
       </form>
