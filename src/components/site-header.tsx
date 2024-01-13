@@ -18,17 +18,14 @@ export function SiteHeader() {
             href="/"
             className="flex items-center space-x-2 text-apple-600 dark:text-apple-400"
           >
-            {/* <Icons.Logo className="w-6 h-6" /> */}
             <span className="font-bold">Portfolio Manager</span>
           </Link>
         </div>
 
         <div className="flex items-center justify-end space-x-4">
-          {/* <SearchCommandMenu /> */}
-
           <nav className="flex items-center space-x-2">
             <Button onClick={() => router.push("/portfolio/add")}>
-              Create new portfolio
+              Create Portfolio
             </Button>
           </nav>
         </div>

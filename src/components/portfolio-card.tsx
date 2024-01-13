@@ -13,7 +13,8 @@ import { Button } from "@/components/ui/button";
 interface PortfolioCardProps {
   title: string;
   company: string;
-  date: string;
+  startDate: Date;
+  endDate: Date;
   description: string;
   id: number;
   onDeleteClick: (id: number) => void;
@@ -22,7 +23,8 @@ interface PortfolioCardProps {
 const PortfolioCard: React.FC<PortfolioCardProps> = ({
   title,
   company,
-  date,
+  startDate,
+  endDate,
   description,
   id,
   onDeleteClick,
@@ -32,17 +34,21 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
       <CardHeader>
         <CardTitle>{title}</CardTitle>
         <CardDescription>{company}</CardDescription>
-        <CardDescription>{date}</CardDescription>
+        <CardDescription>
+          {startDate.toLocaleDateString("id-ID", {
+            month: "long",
+            year: "numeric",
+          })}
+          -
+          {endDate
+            ? endDate.toLocaleDateString("id-ID", {
+                month: "long",
+                year: "numeric",
+              })
+            : "Present"}
+        </CardDescription>
       </CardHeader>
       <CardContent>{description}</CardContent>
-      <CardFooter className="flex space-x-2">
-        <Link href={`/portfolio/edit/${id}`}>
-          <Button>Edit Portfolio</Button>
-        </Link>
-        <Button variant="destructive" onClick={() => onDeleteClick(id)}>
-          Delete Portfolio
-        </Button>
-      </CardFooter>
     </Card>
   );
 };

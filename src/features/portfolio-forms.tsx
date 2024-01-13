@@ -46,7 +46,21 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
       backgroundImage: initialProductData?.data.backgroundImage,
       avatar: initialProductData?.data.avatar,
       title: initialProductData?.data.title,
-      portfolio: initialProductData?.data.portfolio,
+      //   portfolio: [
+      //     {
+      //       name: initialProductData?.data.portfolio[0],
+      //     }
+      //   ]
+      // },
+
+      portfolio: initialProductData?.data.portfolio.map((item) => ({
+        name: item.name,
+        position: item.position,
+        company: item.company,
+        startDate: item.startDate,
+        endDate: item.endDate,
+        description: item.description,
+      })),
     },
   });
 
@@ -129,10 +143,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto space-y-4 "
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
         <FormField
           control={form.control}
           name="backgroundImage"
@@ -192,6 +203,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             width={100}
             height={100}
             alt={"Image preview"}
+            // className="w-full"
             src={
               form.watch("avatar") && URL.createObjectURL(form.watch("avatar"))
             }
@@ -219,6 +231,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             </FormItem>
           )}
         />
+
         <FormField
           control={form.control}
           name="title"
@@ -419,26 +432,28 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
         })}
         <div className="space-x-2">
           <>
-            <Button type="submit">{mode === "add" ? "Save" : "Update"}</Button>
-
-            {mode === "add" && (
-              <Button
-                type="button"
-                onClick={() =>
-                  append({
-                    name: "",
-                    position: "",
-                    company: "",
-                    startDate: new Date(),
-                    endDate: new Date(),
-                    description: "",
-                  })
-                }
-              >
-                Add Portfolio
-              </Button>
-            )}
+            <Button
+              type="button"
+              onClick={() =>
+                append({
+                  name: "",
+                  position: "",
+                  company: "",
+                  startDate: new Date(),
+                  endDate: new Date(),
+                  description: "",
+                })
+              }
+            >
+              Add Portfolio
+            </Button>
+            <Button type="submit">Save Changes</Button>
           </>
+          {/* {form.watch() && (
+            <pre className="text-black">
+              {JSON.stringify(form.watch(), null, 2)}
+            </pre>
+          )} */}
         </div>
       </form>
     </Form>

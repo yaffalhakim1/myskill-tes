@@ -15,3 +15,28 @@ export type ProfileSchema = {
 };
 
 export type PortfolioInputs = z.infer<typeof portfolioSchema>;
+
+export interface Profile {
+  id: number;
+  username: string;
+  description: string;
+  title: string;
+  avatar: string;
+  backgroundImage: string;
+}
+
+export interface Portfolio {
+  id: number;
+  profileId: number;
+  name: string;
+  position: string;
+  company: string;
+  description: string;
+  startDate: string;
+  endDate: string;
+}
+
+export interface DBSchema {
+  profile: Profile;
+  portfolio: Portfolio[];
+}
