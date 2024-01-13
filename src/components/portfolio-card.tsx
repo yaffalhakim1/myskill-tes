@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 
 interface PortfolioCardProps {
   title: string;
+  name?: string;
+  position?: string;
   company: string;
   startDate: Date;
   endDate: Date;
@@ -26,6 +28,7 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
   startDate,
   endDate,
   description,
+  position,
   id,
   onDeleteClick,
 }) => {

@@ -4,9 +4,12 @@ import { useRouter } from "next/router";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { MobileNav } from "@/components/mobile-nav";
+import { useProfile } from "@/lib/fetchers";
 
 export function SiteHeader() {
   const router = useRouter();
+
+  const { profile } = useProfile();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
@@ -24,9 +27,19 @@ export function SiteHeader() {
 
         <div className="flex items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
-            <Button onClick={() => router.push("/portfolio/add")}>
-              Create Portfolio
-            </Button>
+            {profile && (
+              <Button
+                onClick={() => router.push(`/portfolio/edit/${profile.id}`)}
+              >
+                Edit Portfolio
+              </Button>
+            )}
+
+            {!profile && (
+              <Button onClick={() => router.push("/portfolio/add")}>
+                Create Portfolio
+              </Button>
+            )}
           </nav>
         </div>
       </div>

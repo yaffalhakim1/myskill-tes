@@ -8,11 +8,7 @@ export type Response<TData = unknown> = {
 };
 
 // FOR SCHEMAS
-export type ProfileSchema = {
-  data: {
-    id: number;
-  } & z.infer<typeof portfolioSchema>;
-};
+export type ProfileSchema = z.infer<typeof portfolioSchema>;
 
 export type PortfolioInputs = z.infer<typeof portfolioSchema>;
 
@@ -23,6 +19,7 @@ export interface Profile {
   title: string;
   avatar: string;
   backgroundImage: string;
+  portfolios: Portfolio[];
 }
 
 export interface Portfolio {

@@ -6,23 +6,25 @@ import MainLayout from "./main-layout";
 import Image from "next/image";
 import PortfolioCard from "@/components/portfolio-card";
 import useSWR from "swr";
-import { fetcher } from "@/lib/fetchers";
+import { fetcher, useProfile } from "@/lib/fetchers";
 import { Portfolio, Profile } from "@/types/api";
+import { FileCheck2Icon } from "lucide-react";
 
 export default function PortfolioPage() {
   const router = useRouter();
 
-  const {
-    data: profile,
-    isLoading: loadingProfile,
-    error: errorProfile,
-  } = useSWR<Profile>("/profile", fetcher);
+  const { profile, isErrorProfile, isLoadingProfile } = useProfile();
 
-  const { data, isLoading, error } = useSWR<Portfolio[]>("/portfolio", fetcher);
+  const { data, isLoading, error } = useSWR<Portfolio[]>(
+    "/portfolios",
+    fetcher
+  );
+
+  console.log(profile?.portfolios);
 
   return (
     <>
-      {/* <img src="https://placehold.co/1920x900" alt="nextjs" /> */}
+      <img src="https://placehold.co/1920x900" alt="nextjs" />
 
       <div className="text-center">
         <h3 className="mt-8 text-3xl font-semibold">
@@ -39,11 +41,17 @@ export default function PortfolioPage() {
         {isLoading && <p>Loading...</p>}
         {error && <p>Failed to fetch portfolios, please try again later</p>}
         {data?.length === 0 && (
-          <p className="">
-            Your portfolio will show up here once you create it.
-          </p>
+          <div className="flex flex-col items-center justify-center h-full space-y-4">
+            <FileCheck2Icon className="w-24 h-24 text-muted-foreground" />
+            <h1 className="text-2xl font-bold text-muted-foreground">
+              No portfolio added
+            </h1>
+            <p className="text-lg text-center text-muted-foreground">
+              Add your portfolio to show your skills and experience
+            </p>
+          </div>
         )}
-        {data?.map((portfolio) => (
+        {profile?.portfolios?.map((portfolio) => (
           <PortfolioCard
             key={portfolio.id}
             id={portfolio.id}

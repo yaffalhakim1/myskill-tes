@@ -29,6 +29,9 @@ import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PortfolioPage from "@/pages";
+import PortfolioCard from "@/components/portfolio-card";
 
 interface PortfolioFormProps {
   mode: "add" | "edit";
@@ -41,31 +44,17 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
   const form = useForm<PortfolioInputs>({
     resolver: zodResolver(portfolioSchema),
     defaultValues: {
-      username: initialProductData?.data.username,
-      description: initialProductData?.data.description,
-      backgroundImage: initialProductData?.data.backgroundImage,
-      avatar: initialProductData?.data.avatar,
-      title: initialProductData?.data.title,
-      //   portfolio: [
-      //     {
-      //       name: initialProductData?.data.portfolio[0],
-      //     }
-      //   ]
-      // },
-
-      portfolio: initialProductData?.data.portfolio.map((item) => ({
-        name: item.name,
-        position: item.position,
-        company: item.company,
-        startDate: item.startDate,
-        endDate: item.endDate,
-        description: item.description,
-      })),
+      username: initialProductData?.username,
+      description: initialProductData?.description,
+      backgroundImage: initialProductData?.backgroundImage,
+      avatar: initialProductData?.avatar,
+      title: initialProductData?.title,
+      portfolios: initialProductData?.portfolios,
     },
   });
 
   const { fields, append, remove } = useFieldArray({
-    name: "portfolio",
+    name: "portfolios",
     control: form.control,
   });
 
@@ -73,7 +62,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
     const { success, message } = await updatePortfolio(
       mode,
       data,
-      initialProductData?.data.id
+      initialProductData?.id
     );
 
     success ? toast.success(message) : toast.error(message);
@@ -143,319 +132,353 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
-        <FormField
-          control={form.control}
-          name="backgroundImage"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Dropzone
-                  {...field}
-                  dropMessage="Drop files or click here"
-                  handleOnDrop={handleOnDrop}
-                />
-              </FormControl>
+      <Tabs defaultValue="form">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="form">Form</TabsTrigger>
+          <TabsTrigger value="preview">Preview</TabsTrigger>
+        </TabsList>
+        <TabsContent value="form">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 ">
+            <FormField
+              control={form.control}
+              name="backgroundImage"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Dropzone
+                      {...field}
+                      dropMessage="Drop files or click here"
+                      handleOnDrop={handleOnDrop}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {mode === "add" && form.watch("backgroundImage") && (
-          <Image
-            width={250}
-            height={250}
-            alt={"Image preview"}
-            // className="w-full"
-            src={
-              form.watch("backgroundImage") &&
-              URL.createObjectURL(form.watch("backgroundImage"))
-            }
-          />
-        )}
-        {mode === "edit" && initialProductData && (
-          <Image
-            width={100}
-            height={100}
-            src={initialProductData.data.backgroundImage}
-            alt={initialProductData.data.title}
-          />
-        )}
-        <FormField
-          control={form.control}
-          name="avatar"
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Dropzone
-                  {...field}
-                  dropMessage="Drop files or click here"
-                  handleOnDrop={handleOnDropTwo}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        {mode === "add" && form.watch("avatar") && (
-          <Image
-            width={100}
-            height={100}
-            alt={"Image preview"}
-            // className="w-full"
-            src={
-              form.watch("avatar") && URL.createObjectURL(form.watch("avatar"))
-            }
-          />
-        )}
-        {mode === "edit" && initialProductData && (
-          <Image
-            width={500}
-            height={500}
-            src={initialProductData.data.avatar}
-            alt={initialProductData.data.title}
-          />
-        )}
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
+            {mode === "add" && form.watch("backgroundImage") && (
+              <Image
+                width={250}
+                height={250}
+                alt={"Image preview"}
+                // className="w-full"
+                src={
+                  form.watch("backgroundImage") &&
+                  URL.createObjectURL(form.watch("backgroundImage"))
+                }
+              />
+            )}
+            {mode === "edit" && initialProductData && (
+              <Image
+                width={100}
+                height={100}
+                src={initialProductData.backgroundImage}
+                alt={initialProductData.title}
+              />
+            )}
+            <FormField
+              control={form.control}
+              name="avatar"
+              render={({ field }) => (
+                <FormItem className="w-full">
+                  <FormControl>
+                    <Dropzone
+                      {...field}
+                      dropMessage="Drop files or click here"
+                      handleOnDrop={handleOnDropTwo}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {mode === "add" && form.watch("avatar") && (
+              <Image
+                width={100}
+                height={100}
+                alt={"Image preview"}
+                // className="w-full"
+                src={
+                  form.watch("avatar") &&
+                  URL.createObjectURL(form.watch("avatar"))
+                }
+              />
+            )}
+            {mode === "edit" && initialProductData && (
+              <Image
+                width={500}
+                height={500}
+                src={initialProductData.avatar}
+                alt={initialProductData.title}
+              />
+            )}
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title/position</FormLabel>
-              <FormControl>
-                <Input placeholder="shadcn" {...field} />
-              </FormControl>
+            <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Title/position</FormLabel>
+                  <FormControl>
+                    <Input placeholder="shadcn" {...field} />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe yourself here"
-                  {...field}
-                  rows={5}
-                />
-              </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="description"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Description</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe yourself here"
+                      {...field}
+                      rows={5}
+                    />
+                  </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        {fields.map((field, index) => {
-          return (
-            <div key={field.id} className="space-y-4">
-              <div className="flex">
-                <h1 className="text-2xl font-bold">Portfolio {index + 1}</h1>
-                <button
+            {fields.map((field, index) => {
+              return (
+                <div key={field.id} className="space-y-4">
+                  <div className="flex">
+                    <h1 className="text-2xl font-bold">
+                      Portfolio {index + 1}
+                    </h1>
+                    <button
+                      type="button"
+                      onClick={() => remove(index)}
+                      className="ml-auto"
+                    >
+                      <XIcon className="w-6 h-6 text-red-500" />
+                    </button>
+                  </div>
+                  <FormField
+                    control={form.control}
+                    name={`portfolios.${index}.name`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="shadcn" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`portfolios.${index}.position`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Position</FormLabel>
+                        <FormControl>
+                          <Input placeholder="shadcn" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`portfolios.${index}.company`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Company</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Shopee" {...field} />
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="space-x-0 space-y-2 md:flex md:space-x-2 md:space-y-0">
+                    <FormField
+                      control={form.control}
+                      name={`portfolios.${index}.startDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col ">
+                          <FormLabel>Start Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="absolute w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`portfolios.${index}.endDate`}
+                      render={({ field }) => (
+                        <FormItem className="flex flex-col">
+                          <FormLabel>End Date</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant={"outline"}
+                                  className={cn(
+                                    "w-[240px] pl-3 text-left font-normal",
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Pick a date</span>
+                                  )}
+                                  <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0 "
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                disabled={(date) =>
+                                  date > new Date() ||
+                                  date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name={`portfolios.${index}.description`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="paracetamol, aaa"
+                            {...field}
+                            rows={5}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              );
+            })}
+            <div className="space-x-2">
+              <>
+                <Button
                   type="button"
-                  onClick={() => remove(index)}
-                  className="ml-auto"
+                  onClick={() =>
+                    append({
+                      name: "",
+                      position: "",
+                      company: "",
+                      startDate: new Date(),
+                      endDate: new Date(),
+                      description: "",
+                    })
+                  }
                 >
-                  <XIcon className="w-6 h-6 text-red-500" />
-                </button>
-              </div>
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.name`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Title</FormLabel>
-                    <FormControl>
-                      <Input placeholder="shadcn" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.position`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Input placeholder="shadcn" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.company`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Company</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Shopee" {...field} />
-                    </FormControl>
-
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="space-x-0 space-y-2 md:flex md:space-x-2 md:space-y-0">
-                <FormField
-                  control={form.control}
-                  name={`portfolio.${index}.startDate`}
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col ">
-                      <FormLabel>Start Date</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent
-                          className="absolute w-auto p-0"
-                          align="start"
-                        >
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name={`portfolio.${index}.endDate`}
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>End Date</FormLabel>
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant={"outline"}
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
-                              )}
-                            >
-                              {field.value ? (
-                                format(field.value, "PPP")
-                              ) : (
-                                <span>Pick a date</span>
-                              )}
-                              <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0 " align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <FormField
-                control={form.control}
-                name={`portfolio.${index}.description`}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="paracetamol, aaa"
-                        {...field}
-                        rows={5}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  Add Portfolios
+                </Button>
+                <Button type="submit">Save Changes</Button>
+              </>
             </div>
-          );
-        })}
-        <div className="space-x-2">
-          <>
-            <Button
-              type="button"
-              onClick={() =>
-                append({
-                  name: "",
-                  position: "",
-                  company: "",
-                  startDate: new Date(),
-                  endDate: new Date(),
-                  description: "",
-                })
-              }
-            >
-              Add Portfolio
-            </Button>
-            <Button type="submit">Save Changes</Button>
-          </>
-          {/* {form.watch() && (
-            <pre className="text-black">
-              {JSON.stringify(form.watch(), null, 2)}
-            </pre>
-          )} */}
-        </div>
-      </form>
+          </form>
+        </TabsContent>
+        <TabsContent value="preview">
+          {fields.length === 0 && (
+            <div className="flex flex-col items-center justify-center h-full space-y-4">
+              <FileCheck2Icon className="w-24 h-24 text-muted-foreground" />
+              <h6 className="text-2xl font-bold text-muted-foreground">
+                Your portfolio preview will be shown here
+              </h6>
+            </div>
+          )}
+          {fields.map((field, index) => (
+            <PortfolioCard
+              key={field.id}
+              title={field.name}
+              position={field.position}
+              company={field.company}
+              startDate={field.startDate}
+              endDate={field.endDate}
+              description={field.description}
+              id={index}
+              onDeleteClick={() => {}}
+            />
+          ))}
+        </TabsContent>
+      </Tabs>
     </Form>
   );
 }

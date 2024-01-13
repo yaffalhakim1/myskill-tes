@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 export const portfolioSchema = z.object({
+  id: z.number().optional(),
   username: z.string().min(2).max(50),
   backgroundImage: z.any(),
   avatar: z.any(),
@@ -8,7 +9,7 @@ export const portfolioSchema = z.object({
   description: z.string().min(2).max(50, {
     message: "Description must be at most 50 characters long",
   }),
-  portfolio: z
+  portfolios: z
     .array(
       z.object({
         name: z.string().min(2).max(50, {

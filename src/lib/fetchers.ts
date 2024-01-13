@@ -1,5 +1,11 @@
-import { PortfolioInputs, ProfileSchema } from "@/types/api";
+import {
+  Portfolio,
+  PortfolioInputs,
+  Profile,
+  ProfileSchema,
+} from "@/types/api";
 import { Response } from "@/types/api";
+import useSWR from "swr";
 
 export async function fetcher<TData>(
   endpoint: string,
@@ -14,6 +20,29 @@ export async function fetcher<TData>(
 
   return res.json();
 }
+
+export const useProfile = () => {
+  const { data, error, isLoading } = useSWR<Profile>("/profiles/1", fetcher);
+
+  return {
+    profile: data,
+    isLoadingProfile: isLoading,
+    isErrorProfile: error,
+  };
+};
+
+export const usePortfolio = () => {
+  const { data, error, isLoading } = useSWR<Portfolio[]>(
+    "/portfolios",
+    fetcher
+  );
+
+  return {
+    portfolio: data,
+    isLoadingPorto: isLoading,
+    isErrorPorto: error,
+  };
+};
 
 export async function convertToCloudinaryURL(url: string) {
   try {
@@ -74,12 +103,12 @@ export async function updatePortfolio(
     }
 
     const url = new URL(
-      `${mode === "edit" ? `/v1/products/${id}` : "/v1/products"}`,
+      `${mode === "edit" ? `/profiles/${id}` : "/profiles"}`,
       process.env.NEXT_PUBLIC_DB_URL
     );
 
     const options: RequestInit = {
-      method: mode === "add" ? "POST" : "PUT",
+      method: mode === "add" ? "POST" : "PATCH",
       headers: {
         accept: "application/json",
       },
