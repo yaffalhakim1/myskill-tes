@@ -127,7 +127,7 @@ export async function updatePortfolio(
 
     return {
       success: true,
-      message: `Product ${mode === "add" ? "added" : "updated"}`,
+      message: `Portfolio ${mode === "add" ? "added" : "updated"}`,
     };
   } catch (err) {
     return {

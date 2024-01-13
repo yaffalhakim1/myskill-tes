@@ -1,31 +1,31 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { useRouter } from "next/router";
 import React, { ReactElement } from "react";
 import MainLayout from "./main-layout";
-import Image from "next/image";
 import PortfolioCard from "@/components/portfolio-card";
-import useSWR from "swr";
-import { fetcher, useProfile } from "@/lib/fetchers";
-import { Portfolio, Profile } from "@/types/api";
+import { useProfile } from "@/lib/fetchers";
 import { FileCheck2Icon } from "lucide-react";
 
 export default function PortfolioPage() {
-  const router = useRouter();
-
   const { profile, isErrorProfile, isLoadingProfile } = useProfile();
-
-  const { data, isLoading, error } = useSWR<Portfolio[]>(
-    "/portfolios",
-    fetcher
-  );
 
   console.log(profile?.portfolios);
 
   return (
     <>
-      <img src="https://placehold.co/1920x900" alt="nextjs" />
-
+      <div className="relative">
+        <img
+          src={profile?.backgroundImage}
+          className="object-cover w-full h-60"
+          alt="background"
+        />
+        <img
+          src={profile?.avatar}
+          className="absolute bottom-0 w-32 h-32 transform -translate-y-1/2 border-2 border-white rounded-full"
+          alt="avatar"
+          style={{ left: "50%", marginLeft: "-2rem" }}
+        />
+      </div>
       <div className="text-center">
         <h3 className="mt-8 text-3xl font-semibold">
           {profile?.username || "Your Name"}{" "}
@@ -38,9 +38,11 @@ export default function PortfolioPage() {
 
       <div>
         <h2 className="mt-8 text-2xl font-semibold">Portfolio</h2>
-        {isLoading && <p>Loading...</p>}
-        {error && <p>Failed to fetch portfolios, please try again later</p>}
-        {data?.length === 0 && (
+        {isLoadingProfile && <p>Loading...</p>}
+        {isErrorProfile && (
+          <p>Failed to fetch portfolios, please try again later</p>
+        )}
+        {profile?.portfolios.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full space-y-4">
             <FileCheck2Icon className="w-24 h-24 text-muted-foreground" />
             <h1 className="text-2xl font-bold text-muted-foreground">

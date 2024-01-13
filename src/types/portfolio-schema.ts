@@ -20,13 +20,11 @@ export const portfolioSchema = z.object({
         }),
         company: z.string().min(2).max(50),
         startDate: z.date({
-          required_error: "A date of birth is required.",
+          required_error: "Start Date is required.",
         }),
-
         endDate: z.date({
-          required_error: "A date of birth is required.",
+          required_error: "End Date is required.",
         }),
-
         description: z.string().min(2).max(50),
       })
     )

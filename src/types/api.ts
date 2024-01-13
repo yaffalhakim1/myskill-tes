@@ -29,8 +29,8 @@ export interface Portfolio {
   position: string;
   company: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
 }
 
 export interface DBSchema {

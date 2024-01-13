@@ -5,52 +5,9 @@
       "username": "Yafi",
       "description": "This is a portfolio page",
       "title": "Frontend Engineer",
-      "avatar": "https://i.pravatar.cc/300",
-      "backgroundImage": "https://i.pravatar.cc/300",
-      "portfolios": [
-        {
-          "name": "Yafi",
-          "position": "CEO",
-          "profileId": "1",
-
-          "company": "Vercel",
-          "startDate": "2024-01-02T17:00:00.000Z",
-          "endDate": "2023-12-31T17:00:00.000Z",
-          "description": "This is a description"
-        },
-        {
-          "name": "Yafi",
-          "profileId": "1",
-
-          "position": "CEO",
-          "company": "Vercel",
-          "startDate": "2024-01-03T17:00:00.000Z",
-          "endDate": "2024-01-09T17:00:00.000Z",
-          "description": "This is a description"
-        }
-      ]
-    }
-  ],
-  "portfolios": [
-    {
-      "id": "1",
-      "profileId": "1",
-      "name": "Yafi",
-      "position": "CEO",
-      "company": "Vercel",
-      "description": "This is a description",
-      "startDate": "2020-01-01",
-      "endDate": "2020-01-01"
-    },
-    {
-      "id": "2",
-      "profileId": "1",
-      "name": "Yafi",
-      "position": "CEO",
-      "company": "Vercel",
-      "description": "This is a description",
-      "startDate": "2020-01-01",
-      "endDate": "2020-01-01"
+      "avatar": "https://res.cloudinary.com/dywbf3czv/image/upload/v1702605714/awuawocrwlf4wqoy68pa.jpg",
+      "backgroundImage": "https://res.cloudinary.com/dywbf3czv/image/upload/v1702605714/awuawocrwlf4wqoy68pa.jpg",
+      "portfolios": []
     }
   ]
 }

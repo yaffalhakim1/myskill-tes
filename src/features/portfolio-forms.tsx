@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useRouter } from "next/router";
@@ -18,7 +19,7 @@ import { PortfolioInputs, ProfileSchema } from "@/types/api";
 import { updatePortfolio } from "@/lib/fetchers";
 import { toast } from "sonner";
 import { Dropzone } from "@/components/ui/dropzone";
-import { CalendarIcon, FileCheck2Icon, XIcon } from "lucide-react";
+import { CalendarIcon, FileCheck2Icon, ViewIcon, XIcon } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -67,7 +68,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
     success ? toast.success(message) : toast.error(message);
 
-    // router.push("/dashboard/products");
+    router.push("/");
   };
 
   function handleOnDrop(acceptedFiles: FileList | null) {
@@ -88,6 +89,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
           type: "typeError",
         });
       } else {
+        form.setValue("backgroundImage", URL.createObjectURL(acceptedFiles[0]));
         form.setValue("backgroundImage", acceptedFiles[0]);
         form.getFieldState("backgroundImage").isDirty;
         form.clearErrors("backgroundImage");
@@ -118,6 +120,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
           type: "typeError",
         });
       } else {
+        form.setValue("avatar", URL.createObjectURL(acceptedFiles[0]));
         form.setValue("avatar", acceptedFiles[0]);
         form.clearErrors("avatar");
       }
@@ -146,18 +149,27 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                 <FormItem className="w-full">
                   <FormControl>
                     <Dropzone
-                      {...field}
                       dropMessage="Drop files or click here"
                       handleOnDrop={handleOnDrop}
+                      {...field}
                     />
                   </FormControl>
-
+                  {mode === "add" &&
+                    form.getFieldState("backgroundImage").isDirty && (
+                      <img src={field.value} alt={"Image preview"} />
+                    )}
+                  {mode === "edit" && initialProductData && (
+                    <img
+                      src={initialProductData.backgroundImage}
+                      alt={initialProductData.title}
+                    />
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            {mode === "add" && form.watch("backgroundImage") && (
+            {/* {mode === "add" && form.watch("backgroundImage") && (
               <Image
                 width={250}
                 height={250}
@@ -171,12 +183,13 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             )}
             {mode === "edit" && initialProductData && (
               <Image
-                width={100}
-                height={100}
+                width={250}
+                height={250}
                 src={initialProductData.backgroundImage}
                 alt={initialProductData.title}
               />
-            )}
+            )} */}
+
             <FormField
               control={form.control}
               name="avatar"
@@ -195,8 +208,8 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             />
             {mode === "add" && form.watch("avatar") && (
               <Image
-                width={100}
-                height={100}
+                width={250}
+                height={250}
                 alt={"Image preview"}
                 // className="w-full"
                 src={
@@ -207,8 +220,8 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
             )}
             {mode === "edit" && initialProductData && (
               <Image
-                width={500}
-                height={500}
+                width={250}
+                height={250}
                 src={initialProductData.avatar}
                 alt={initialProductData.title}
               />
