@@ -1,6 +1,7 @@
 import {
   Portfolio,
   PortfolioInputs,
+  Portfolios,
   Profile,
   ProfileSchema,
 } from "@/types/api";
@@ -22,7 +23,7 @@ export async function fetcher<TData>(
 }
 
 export const useProfile = () => {
-  const { data, error, isLoading } = useSWR<Profile>("/profiles/1", fetcher);
+  const { data, error, isLoading } = useSWR<Profile>(`/profiles/${1}`, fetcher);
 
   return {
     profile: data,
@@ -46,9 +47,9 @@ export const usePortfolio = () => {
 
 export async function convertToCloudinaryURL(url: string) {
   try {
-    if (!url.startsWith("blob")) {
-      return url;
-    }
+    // if (!url.startsWith("blob")) {
+    //   return url;
+    // }
 
     const data = new FormData();
     data.append("file", await fetch(url).then((res) => res.blob()));
@@ -63,7 +64,7 @@ export async function convertToCloudinaryURL(url: string) {
     );
 
     if (!res.ok) {
-      throw new Error("failed to upload product photo");
+      throw new Error("failed to upload photo");
     }
 
     const json = await res.json();
@@ -103,14 +104,18 @@ export async function updatePortfolio(
     }
 
     const url = new URL(
-      `${mode === "edit" ? `/profiles/${id}` : "/profiles"}`,
+      mode === "add" ? "/profiles" : `/profiles/${id}`,
       process.env.NEXT_PUBLIC_DB_URL
     );
 
+    // const url = new URL(
+    //   `/profiles/${mode === "edit" ? id : ""}`,
+    //   process.env.NEXT_PUBLIC_DB_URL
+    // );
     const options: RequestInit = {
       method: mode === "add" ? "POST" : "PATCH",
       headers: {
-        accept: "application/json",
+        "Content-type": "application/json",
       },
       body: JSON.stringify({
         ...data,
@@ -122,7 +127,7 @@ export async function updatePortfolio(
     const res = await fetch(url, options);
 
     if (!res.ok) {
-      throw new Error("Failed to update a product");
+      throw new Error("Failed to update the portfolio");
     }
 
     return {

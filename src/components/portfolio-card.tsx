@@ -38,20 +38,25 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
         <CardTitle>{title}</CardTitle>
         <CardDescription>{company}</CardDescription>
         <CardDescription>
-          {startDate.toLocaleDateString("id-ID", {
+          {startDate.toLocaleString("id-ID", {
             month: "long",
             year: "numeric",
-          })}
-          -
+          })}{" "}
+          -{" "}
           {endDate
-            ? endDate.toLocaleDateString("id-ID", {
+            ? endDate.toLocaleString("id-ID", {
                 month: "long",
                 year: "numeric",
               })
             : "Present"}
         </CardDescription>
       </CardHeader>
-      <CardContent>{description}</CardContent>
+      <CardContent>
+        {description
+          .split("-")
+          .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(", ")}
+      </CardContent>
     </Card>
   );
 };

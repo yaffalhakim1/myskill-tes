@@ -27,15 +27,13 @@ export function SiteHeader() {
 
         <div className="flex items-center justify-end space-x-4">
           <nav className="flex items-center space-x-2">
-            {profile?.portfolios && (
+            {profile?.portfolios ? (
               <Button
                 onClick={() => router.push(`/portfolio/edit/${profile.id}`)}
               >
                 Edit Portfolio
               </Button>
-            )}
-
-            {!profile?.portfolios && (
+            ) : (
               <Button onClick={() => router.push("/portfolio/add")}>
                 Create Portfolio
               </Button>

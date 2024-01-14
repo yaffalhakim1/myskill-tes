@@ -7,6 +7,10 @@ export type Response<TData = unknown> = {
   data?: TData;
 };
 
+export type Portfolios = {
+  id: number;
+} & z.infer<typeof portfolioSchema>;
+
 // FOR SCHEMAS
 export type ProfileSchema = z.infer<typeof portfolioSchema>;
 

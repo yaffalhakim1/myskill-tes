@@ -1,13 +1,22 @@
 {
   "profiles": [
     {
-      "id": "1",
       "username": "Yafi",
-      "description": "This is a portfolio page",
       "title": "Frontend Engineer",
-      "avatar": "https://res.cloudinary.com/dywbf3czv/image/upload/v1702605714/awuawocrwlf4wqoy68pa.jpg",
-      "backgroundImage": "https://res.cloudinary.com/dywbf3czv/image/upload/v1702605714/awuawocrwlf4wqoy68pa.jpg",
-      "portfolios": []
+      "description": "Mobile Engineer Intern with 4 months of Flutter experience, and 1.5 Year as a Frontend Engineer with React. Currently, I'm a Frontend Engineer Trainee at Shopee Indonesia.",
+      "portfolios": [
+        {
+          "name": "Muhammad Yafi Alhakim",
+          "position": "Frontend Engineer",
+          "company": "Sea Labs Indonesia (Shopee)",
+          "startDate": "2024-01-03T17:00:00.000Z",
+          "endDate": "2024-01-07T17:00:00.000Z",
+          "description": "Mobile Engineer Intern with 4 months of Flutter experience, and 1.5 Year as a Frontend Engineer with React. Currently, I'm a Frontend Engineer Trainee at Shopee Indonesia."
+        }
+      ],
+      "avatar": "https://res.cloudinary.com/dywbf3czv/image/upload/uricogalksxkcyl3ovnz.png",
+      "backgroundImage": "https://res.cloudinary.com/dywbf3czv/image/upload/nxzeppwlt68bpuc4rhra.png",
+      "id": 1
     }
   ]
 }

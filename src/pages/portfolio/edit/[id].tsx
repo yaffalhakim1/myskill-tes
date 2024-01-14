@@ -6,7 +6,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 export const getServerSideProps: GetServerSideProps<{
   data: ProfileSchema;
 }> = async (context) => {
-  const res = await fetch(`http://localhost:3001/profiles/1?_embed=portfolios`);
+  const res = await fetch(`http://localhost:3001/profiles/1`);
   const data = await res.json();
 
   if (!data) {

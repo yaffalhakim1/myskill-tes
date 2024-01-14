@@ -18,8 +18,13 @@ import React from "react";
 import { PortfolioInputs, ProfileSchema } from "@/types/api";
 import { updatePortfolio } from "@/lib/fetchers";
 import { toast } from "sonner";
-import { Dropzone } from "@/components/ui/dropzone";
-import { CalendarIcon, FileCheck2Icon, ViewIcon, XIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  FileCheck2Icon,
+  Loader2,
+  UploadCloudIcon,
+  XIcon,
+} from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -31,7 +36,6 @@ import { format } from "date-fns";
 import Image from "next/image";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import PortfolioPage from "@/pages";
 import PortfolioCard from "@/components/portfolio-card";
 
 interface PortfolioFormProps {
@@ -68,70 +72,10 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
 
     success ? toast.success(message) : toast.error(message);
 
+    if (!success) return;
+
     router.push("/");
   };
-
-  function handleOnDrop(acceptedFiles: FileList | null) {
-    if (acceptedFiles && acceptedFiles.length > 0) {
-      const allowedTypes = [
-        {
-          types: ["image/jpeg", "image/png", "image/jpg"],
-          message: "Only image files are allowed",
-        },
-      ];
-      const fileType = allowedTypes.find((allowedType) =>
-        allowedType.types.find((type) => type === acceptedFiles[0].type)
-      );
-      if (!fileType) {
-        form.setValue("backgroundImage", null);
-        form.setError("backgroundImage", {
-          message: "File type is not valid",
-          type: "typeError",
-        });
-      } else {
-        form.setValue("backgroundImage", URL.createObjectURL(acceptedFiles[0]));
-        form.setValue("backgroundImage", acceptedFiles[0]);
-        form.getFieldState("backgroundImage").isDirty;
-        form.clearErrors("backgroundImage");
-      }
-    } else {
-      form.setValue("backgroundImage", null);
-      form.setError("backgroundImage", {
-        message: "File is required",
-        type: "typeError",
-      });
-    }
-  }
-  function handleOnDropTwo(acceptedFiles: FileList | null) {
-    if (acceptedFiles && acceptedFiles.length > 0) {
-      const allowedTypes = [
-        {
-          types: ["image/jpeg", "image/png"],
-          message: "Only image files are allowed",
-        },
-      ];
-      const fileType = allowedTypes.find((allowedType) =>
-        allowedType.types.find((type) => type === acceptedFiles[0].type)
-      );
-      if (!fileType) {
-        form.setValue("avatar", null);
-        form.setError("avatar", {
-          message: "File type is not valid",
-          type: "typeError",
-        });
-      } else {
-        form.setValue("avatar", URL.createObjectURL(acceptedFiles[0]));
-        form.setValue("avatar", acceptedFiles[0]);
-        form.clearErrors("avatar");
-      }
-    } else {
-      form.setValue("avatar", null);
-      form.setError("avatar", {
-        message: "File is required",
-        type: "typeError",
-      });
-    }
-  }
 
   return (
     <Form {...form}>
@@ -148,19 +92,64 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Dropzone
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleOnDrop}
-                      {...field}
-                    />
+                    <>
+                      <Input
+                        className="hidden"
+                        id="backgroundImage"
+                        type="file"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (!files) return;
+
+                          const file = files[0];
+                          if (!file) return;
+
+                          form.setValue(
+                            "backgroundImage",
+                            URL.createObjectURL(file),
+                            {
+                              shouldDirty: true,
+                              shouldValidate: true,
+                            }
+                          );
+                        }}
+                        accept="image/*"
+                        ref={field.ref}
+                        disabled={field.disabled}
+                      />
+                      <label htmlFor="backgroundImage" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full font-medium cursor-pointer"
+                          asChild
+                        >
+                          <div>
+                            <UploadCloudIcon className="mr-1.5 h-3.5 w-3.5 translate-y-[-1px] stroke-foreground stroke-[0.6px]" />
+                            Upload Background Image here
+                          </div>
+                        </Button>
+                      </label>
+                    </>
                   </FormControl>
+
                   {mode === "add" &&
                     form.getFieldState("backgroundImage").isDirty && (
-                      <img src={field.value} alt={"Image preview"} />
+                      <Image
+                        width={250}
+                        height={250}
+                        src={field.value}
+                        alt={"Image preview"}
+                      />
                     )}
                   {mode === "edit" && initialProductData && (
-                    <img
-                      src={initialProductData.backgroundImage}
+                    <Image
+                      width={250}
+                      height={250}
+                      src={
+                        form.getFieldState("backgroundImage").isDirty
+                          ? field.value
+                          : initialProductData.backgroundImage
+                      }
                       alt={initialProductData.title}
                     />
                   )}
@@ -169,71 +158,80 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
               )}
             />
 
-            {/* {mode === "add" && form.watch("backgroundImage") && (
-              <Image
-                width={250}
-                height={250}
-                alt={"Image preview"}
-                // className="w-full"
-                src={
-                  form.watch("backgroundImage") &&
-                  URL.createObjectURL(form.watch("backgroundImage"))
-                }
-              />
-            )}
-            {mode === "edit" && initialProductData && (
-              <Image
-                width={250}
-                height={250}
-                src={initialProductData.backgroundImage}
-                alt={initialProductData.title}
-              />
-            )} */}
-
             <FormField
               control={form.control}
               name="avatar"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Dropzone
-                      {...field}
-                      dropMessage="Drop files or click here"
-                      handleOnDrop={handleOnDropTwo}
-                    />
+                    <>
+                      <Input
+                        className="hidden"
+                        id="avatar"
+                        type="file"
+                        onChange={(e) => {
+                          const files = e.target.files;
+                          if (!files) return;
+
+                          const file = files[0];
+                          if (!file) return;
+
+                          form.setValue("avatar", URL.createObjectURL(file), {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                        }}
+                        accept="image/*"
+                        ref={field.ref}
+                        disabled={field.disabled}
+                      />
+                      <label htmlFor="avatar" className="w-full">
+                        <Button
+                          variant="outline"
+                          className="w-full font-medium cursor-pointer"
+                          asChild
+                        >
+                          <div>
+                            <UploadCloudIcon className="mr-1.5 h-3.5 w-3.5 translate-y-[-1px] stroke-foreground stroke-[0.6px]" />
+                            Upload avatar here
+                          </div>
+                        </Button>
+                      </label>
+                    </>
                   </FormControl>
+                  {mode === "add" && form.getFieldState("avatar").isDirty && (
+                    <Image
+                      width={250}
+                      height={250}
+                      src={field.value}
+                      alt={"Image preview"}
+                    />
+                  )}
+                  {mode === "edit" && initialProductData && (
+                    <Image
+                      width={250}
+                      height={250}
+                      src={
+                        form.getFieldState("avatar").isDirty
+                          ? field.value
+                          : initialProductData.avatar
+                      }
+                      alt={initialProductData.title}
+                    />
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {mode === "add" && form.watch("avatar") && (
-              <Image
-                width={250}
-                height={250}
-                alt={"Image preview"}
-                // className="w-full"
-                src={
-                  form.watch("avatar") &&
-                  URL.createObjectURL(form.watch("avatar"))
-                }
-              />
-            )}
-            {mode === "edit" && initialProductData && (
-              <Image
-                width={250}
-                height={250}
-                src={initialProductData.avatar}
-                alt={initialProductData.title}
-              />
-            )}
+
             <FormField
               control={form.control}
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="Your name" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -248,7 +246,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                 <FormItem>
                   <FormLabel>Title/position</FormLabel>
                   <FormControl>
-                    <Input placeholder="shadcn" {...field} />
+                    <Input placeholder="Your position" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -296,7 +294,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                       <FormItem>
                         <FormLabel>Name</FormLabel>
                         <FormControl>
-                          <Input placeholder="shadcn" {...field} />
+                          <Input placeholder="Your Name" {...field} />
                         </FormControl>
 
                         <FormMessage />
@@ -310,7 +308,10 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                       <FormItem>
                         <FormLabel>Position</FormLabel>
                         <FormControl>
-                          <Input placeholder="shadcn" {...field} />
+                          <Input
+                            placeholder="Your position at current company"
+                            {...field}
+                          />
                         </FormControl>
 
                         <FormMessage />
@@ -434,7 +435,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                         <FormLabel>Description</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="paracetamol, aaa"
+                            placeholder="What is your achievement here?"
                             {...field}
                             rows={5}
                           />
@@ -463,7 +464,12 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                 >
                   Add Portfolios
                 </Button>
-                <Button type="submit">Save Changes</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting && (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  )}
+                  Save Changes
+                </Button>
               </>
             </div>
           </form>
@@ -484,7 +490,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
               position={field.position}
               company={field.company}
               startDate={field.startDate}
-              endDate={field.endDate}
+              endDate={field.endDate || new Date()}
               description={field.description}
               id={index}
               onDeleteClick={() => {}}
