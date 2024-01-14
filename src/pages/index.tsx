@@ -4,7 +4,7 @@ import React, { ReactElement } from "react";
 import MainLayout from "./main-layout";
 import PortfolioCard from "@/components/portfolio-card";
 import { useProfile } from "@/lib/fetchers";
-import { FileCheck2Icon } from "lucide-react";
+import { FileCheck2Icon, Loader2 } from "lucide-react";
 
 export default function PortfolioPage() {
   const { profile, isErrorProfile, isLoadingProfile } = useProfile();
@@ -19,14 +19,14 @@ export default function PortfolioPage() {
         />
         <img
           src={profile?.avatar || "profile.svg"}
-          className="absolute bottom-0 w-32 h-32 transform -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-full"
+          className="absolute bottom-0 object-cover w-32 h-32 transform -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-full"
           alt="avatar"
           style={{ left: "50%", top: "100%" }}
         />
       </div>
       <div className="text-center">
         <h3 className="mt-20 text-3xl font-semibold">
-          {profile?.username || "Your Name"}{" "}
+          {profile?.username || "Your Name"}
         </h3>
         <h5 className="text-xl font-semibold text-muted-foreground">
           {profile?.title || "Your Title"}
@@ -36,7 +36,9 @@ export default function PortfolioPage() {
 
       <div className="mb-8">
         <h2 className="mt-8 text-2xl font-semibold">Portfolio</h2>
-        {isLoadingProfile && <p>Loading...</p>}
+        {isLoadingProfile && (
+          <Loader2 className="w-4 h-4 mr-2 text-center animate-spin" />
+        )}
         {isErrorProfile && (
           <p>
             <div className="flex flex-col items-center justify-center h-full space-y-4">
@@ -62,16 +64,26 @@ export default function PortfolioPage() {
           </div>
         )}
         {profile?.portfolios?.map((portfolio) => (
-          <PortfolioCard
-            key={portfolio.id}
-            id={portfolio.id}
-            title={portfolio.name}
-            company={portfolio.company}
-            startDate={new Date(portfolio.startDate)}
-            endDate={new Date(portfolio.endDate)}
-            description={portfolio.description}
-            onDeleteClick={() => {}}
-          />
+          <div key={portfolio.id}>
+            <PortfolioCard
+              title={portfolio.position}
+              company={portfolio.company}
+              startDate={new Intl.DateTimeFormat("id-ID", {
+                month: "long",
+                year: "numeric",
+              }).format(new Date(portfolio.startDate))}
+              endDate={
+                portfolio.endDate
+                  ? new Intl.DateTimeFormat("id-ID", {
+                      month: "long",
+                      year: "numeric",
+                    }).format(new Date(portfolio.endDate))
+                  : "Present"
+              }
+              description={portfolio.description}
+              position={portfolio.position}
+            />
+          </div>
         ))}
       </div>
     </>

@@ -1,6 +1,6 @@
 # Portfolio Manager
 
-for myskill.id test
+Test Front-End MySkill.id
 
 ## Description
 
@@ -30,17 +30,22 @@ In order to run the application, you need to run both the frontend and the backe
 
 ### env
 
+Env is used to hide the base url of the backend.
+
 1. create .env file in root folder
 2. copy the content of .env.example to .env
 
 ### Backend
+
+The schema of the backend is one user can have many portfolios. You can see the structure in db.json file after you fullfill the form.
+
+How to run:
 
 1. split terminal
 2. type `pnpm run db` to start the backend
 3. You should see `http://localhost:3001/` running in your terminal
 
 Notes:
-For the images, i use personal Cloudinary. the reason is because it is easy to store the images and i can get the image url easily. Be careful what image you upload because i can see it in my cloudinary dashboard.
+For the images, i use personal Cloudinary. the reason is because it is easy to store the images and i can get the image url easily. **Be careful** what image you upload because i can see it in my cloudinary dashboard.
 
-I did not deploy the application since the backend won't work properly.
-I assume this application have schema only one user can have many portfolio.
+I did not deploy the application since the **backend won't work properly because of json-server can't be deployed**.

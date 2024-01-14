@@ -47,10 +47,6 @@ export const usePortfolio = () => {
 
 export async function convertToCloudinaryURL(url: string) {
   try {
-    // if (!url.startsWith("blob")) {
-    //   return url;
-    // }
-
     const data = new FormData();
     data.append("file", await fetch(url).then((res) => res.blob()));
     data.append("upload_preset", "ruvcqm7j");
@@ -97,10 +93,10 @@ export async function updatePortfolio(
     const convertedAvatar = await convertToCloudinaryURL(avatar);
 
     if (!convertedImage) {
-      throw new Error("Failed to upload the image. Try again later");
+      throw new Error("Failed to upload the image. Please try again");
     }
     if (!convertedAvatar) {
-      throw new Error("Failed to upload the avatar. Try again later");
+      throw new Error("Failed to upload the avatar. Please try again");
     }
 
     const url = new URL(
@@ -108,10 +104,6 @@ export async function updatePortfolio(
       process.env.NEXT_PUBLIC_DB_URL
     );
 
-    // const url = new URL(
-    //   `/profiles/${mode === "edit" ? id : ""}`,
-    //   process.env.NEXT_PUBLIC_DB_URL
-    // );
     const options: RequestInit = {
       method: mode === "add" ? "POST" : "PATCH",
       headers: {

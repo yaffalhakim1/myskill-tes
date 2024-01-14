@@ -26,11 +26,7 @@ export const portfolioSchema = z.object({
         startDate: z.date({
           required_error: "Start Date is required.",
         }),
-        endDate: z
-          .date({
-            required_error: "End Date is required.",
-          })
-          .optional(),
+        endDate: z.date().optional(),
         description: z.string().min(2).max(1000),
       })
     )

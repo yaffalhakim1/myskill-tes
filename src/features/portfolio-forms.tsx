@@ -393,11 +393,9 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Pick a date</span>
-                                  )}
+                                  {field.value
+                                    ? format(field.value, "PPP")
+                                    : "Pick a date"}
                                   <CalendarIcon className="w-4 h-4 ml-auto opacity-50" />
                                 </Button>
                               </FormControl>
@@ -455,7 +453,6 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
                       position: "",
                       company: "",
                       startDate: new Date(),
-                      endDate: new Date(),
                       description: "",
                     })
                   }
@@ -481,19 +478,52 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
               </h6>
             </div>
           )}
-          {fields.map((field, index) => (
-            <PortfolioCard
-              key={field.id}
-              title={field.name}
-              position={field.position}
-              company={field.company}
-              startDate={field.startDate}
-              endDate={field.endDate || new Date()}
-              description={field.description}
-              id={index}
-              onDeleteClick={() => {}}
-            />
+
+          {form.watch("portfolios")?.map((portfolio, index) => (
+            <div key={index}>
+              <PortfolioCard
+                title={portfolio.position}
+                company={portfolio.company}
+                startDate={new Intl.DateTimeFormat("id-ID", {
+                  month: "long",
+                  year: "numeric",
+                }).format(new Date(portfolio.startDate))}
+                endDate={
+                  portfolio.endDate
+                    ? new Intl.DateTimeFormat("id-ID", {
+                        month: "long",
+                        year: "numeric",
+                      }).format(new Date(portfolio.endDate))
+                    : "Present"
+                }
+                description={portfolio.description}
+                position={portfolio.position}
+              />
+            </div>
           ))}
+
+          {/* {fields.map((field) => (
+            <div key={field.id}>
+              <PortfolioCard
+                title={field.position}
+                company={field.company}
+                startDate={new Intl.DateTimeFormat("id-ID", {
+                  month: "long",
+                  year: "numeric",
+                }).format(new Date(field.startDate))}
+                endDate={
+                  field.endDate
+                    ? new Intl.DateTimeFormat("id-ID", {
+                        month: "long",
+                        year: "numeric",
+                      }).format(new Date(field.endDate))
+                    : "Present"
+                }
+                description={field.description}
+                position={field.position}
+              />
+            </div>
+          ))} */}
         </TabsContent>
       </Tabs>
     </Form>

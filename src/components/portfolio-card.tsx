@@ -2,43 +2,34 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Link from "next/link";
-
-import { Button } from "@/components/ui/button";
 
 interface PortfolioCardProps {
-  title: string;
+  title?: string;
   name?: string;
   position?: string;
   company: string;
-  startDate: Date;
-  endDate: Date;
+  startDate: string;
+  endDate: string;
   description: string;
-  id: number;
-  onDeleteClick: (id: number) => void;
 }
 
 const PortfolioCard: React.FC<PortfolioCardProps> = ({
-  title,
   company,
   startDate,
   endDate,
   description,
   position,
-  id,
-  onDeleteClick,
 }) => {
   return (
     <Card className="w-full mt-3">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle>{position}</CardTitle>
         <CardDescription>{company}</CardDescription>
         <CardDescription>
-          {startDate.toLocaleString("id-ID", {
+          {/* {startDate.toLocaleString("id-ID", {
             month: "long",
             year: "numeric",
           })}{" "}
@@ -48,7 +39,8 @@ const PortfolioCard: React.FC<PortfolioCardProps> = ({
                 month: "long",
                 year: "numeric",
               })
-            : "Present"}
+            : "Present"} */}
+          {startDate + " - " + endDate}
         </CardDescription>
       </CardHeader>
       <CardContent>
