@@ -71,9 +71,7 @@ export function ProfileForm({ mode, initialProductData }: PortfolioFormProps) {
     );
 
     success ? toast.success(message) : toast.error(message);
-
     if (!success) return;
-
     router.push("/");
   };
 

@@ -34,11 +34,21 @@ export default function PortfolioPage() {
         <p className="">{profile?.description || "Your Bio"}</p>
       </div>
 
-      <div>
+      <div className="mb-8">
         <h2 className="mt-8 text-2xl font-semibold">Portfolio</h2>
         {isLoadingProfile && <p>Loading...</p>}
         {isErrorProfile && (
-          <p>Failed to fetch portfolios, please try again later</p>
+          <p>
+            <div className="flex flex-col items-center justify-center h-full space-y-4">
+              <FileCheck2Icon className="w-24 h-24 text-muted-foreground" />
+              <h1 className="text-2xl font-bold text-muted-foreground">
+                No portfolio added
+              </h1>
+              <p className="text-lg text-center text-muted-foreground">
+                Add your portfolio to show your skills and experience
+              </p>
+            </div>
+          </p>
         )}
         {profile?.portfolios?.length === 0 && (
           <div className="flex flex-col items-center justify-center h-full space-y-4">

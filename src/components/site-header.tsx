@@ -14,7 +14,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background">
       <div className="container flex items-center justify-between h-16">
-        <MobileNav />
+        {/* <MobileNav /> */}
 
         <div className="hidden gap-6 md:flex">
           <Link
