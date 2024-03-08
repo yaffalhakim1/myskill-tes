@@ -1,6 +1,6 @@
 # Portfolio Manager
 
-Test Front-End MySkill.id
+A linkedin lite to manage your past experience works!
 
 ## Description
 
